@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CNW耳机颜色偏好实验</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            color: #ffffff;
+        }
+
+        /* 渐变色版本 */
+        body[data-variant="gradient"] {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        /* 纯色双色版本（修正对角线分割） */
+        body[data-variant="solid"] {
+            background: 
+                linear-gradient(135deg, 
+                    #667eea 0%, #667eea 50%, 
+                    #764ba2 50%, #764ba2 100%
+                );
+            background-size: 100% 100%;
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 800px;
+            padding: 2rem;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            margin: 2rem;
+            backdrop-filter: blur(2px);
+        }
+
+        /* 其他样式保持不变 */
+        .loading { margin-top: 2rem; }
+        .progress-bar {
+            width: 200px;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            margin: 1rem auto;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress {
+            width: 0%;
+            height: 100%;
+            background: #ffffff;
+            transition: width 8s linear;
+        }
+        .products { display: none; margin-top: 2rem; }
+        .color-option {
+            display: inline-block;
+            margin: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .color-option img {
+            width: 150px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background: white;
+            padding: 10px;
+        }
+        .color-option:hover { transform: translateY(-5px); }
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            background: white;
+            color: #667eea;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CNW无线耳机颜色偏好测试</h1>
+        <div class="loading">
+            <p>现在您将浏览几款不同颜色的耳机。</p>
+            <button onclick="startLoading()">开始下载产品</button>
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+        </div>
+        <div class="products">
+            <h2>请选择您喜欢的颜色：</h2>
+            <div id="colorOptions"></div>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const variant = urlParams.get('variant') || 'solid';
+        document.body.setAttribute('data-variant', variant);
+
+        const products = [
+            { color: "黑色", image: "https://via.placeholder.com/150/000000/FFFFFF?text=Black" },
+            { color: "白色", image: "https://via.placeholder.com/150/FFFFFF/000000?text=White" },
+            { color: "深空灰", image: "https://via.placeholder.com/150/666666/FFFFFF?text=Gray" },
+            { color: "蓝色", image: "https://via.placeholder.com/150/0066CC/FFFFFF?text=Blue" }
+        ];
+
+        function startLoading() {
+            document.querySelector('.progress').style.width = '100%';
+            document.querySelector('button').disabled = true;
+            setTimeout(() => {
+                document.querySelector('.loading').style.display = 'none';
+                document.querySelector('.products').style.display = 'block';
+                showProducts();
+            }, 8000);
+        }
+
+        function showProducts() {
+            const container = document.getElementById('colorOptions');
+            container.innerHTML = '';
+            products.forEach(product => {
+                const div = document.createElement('div');
+                div.className = 'color-option';
+                div.innerHTML = `
+                    <img src="${product.image}" alt="${product.color}">
+                    <p>${product.color}</p>
+                `;
+                div.onclick = () => {
+                    alert(`您选择了 ${product.color}！实验组别：${variant}`);
+                    console.log('选择记录:', { variant, color: product.color });
+                };
+                container.appendChild(div);
+            });
+        }
+    </script>
+</body>
+</html>
